@@ -292,8 +292,18 @@ class Config(object):
             for k, v in six.iteritems(parent_item):
                 if k in ('use', 'register', 'meta', 'name'):
                     continue
+                al = pynag.Utils.AttributeList(v)
+                if al.operator == "+":
+                    al.extend(pynag.Utils.AttributeList(parent_item['meta']['inherited_attributes'].get(k, "")))
                 if k not in inherited_attributes:
-                    inherited_attributes[k] = v
+                    inherited_attributes[k] = str(al)
+                else:
+                    if al.operator == "+":
+                        ia = pynag.Utils.AttributeList(inherited_attributes[k])
+                        ia.extend(al)
+                    else:
+                        ia = al
+                    inherited_attributes[k] = str(ia)
                 if k not in original_item:
                     original_item[k] = v
                     template_fields.append(k)
