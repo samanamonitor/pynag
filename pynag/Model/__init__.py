@@ -1772,16 +1772,24 @@ class Host(ObjectDefinition):
     def _do_relations(self):
         super(self.__class__, self)._do_relations()
         # Do hostgroups
+        if self.host_name is None: return
         hg = AttributeList(self.hostgroups)
+        if hg.operator == "+":
+            hg.extend(AttributeList(self._inherited_attributes.get('hostgroups')))
         for i in hg.fields:
             ObjectRelations.host_hostgroups[self.host_name].add(i)
             ObjectRelations.hostgroup_hosts[i].add(self.host_name)
-            # Contactgroups
+        # Do Contactgroups
         cg = AttributeList(self.contact_groups)
+        if cg.operator == "+":
+            cg.extend(AttributeList(self._inherited_attributes.get('contactgroups')))
         for i in cg.fields:
             ObjectRelations.host_contact_groups[self.host_name].add(i)
             ObjectRelations.contactgroup_hosts[i].add(self.get_id())
+        # Do Contacts
         contacts = AttributeList(self.contacts)
+        if contacts.operator == "+":
+            contacts.extend(AttributeList(self._inherited_attributes.get('contacts')))
         for i in contacts.fields:
             ObjectRelations.host_contacts[self.host_name].add(i)
             ObjectRelations.contact_hosts[i].add(self.get_id())
