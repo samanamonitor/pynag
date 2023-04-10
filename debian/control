@@ -5,4 +5,6 @@ Depends: %DEPENDS%
 Conflicts: %CONFLICTS%
 Architecture: amd64
 Homepage: https://www.samanagroup.com
-Description: SAMM libraries. Samana Advanced Monitoring and Management
+Description: Python modules and utilities for pragmatically handling Nagios
+ configuration file maintenance, status information, log file parsing and
+ plug-in development.
