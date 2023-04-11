@@ -11,6 +11,7 @@ from distutils.command.build_py import build_py as _build_py
 from pynag import __version__
 from subprocess import call, PIPE, Popen
 import sys
+import re
 
 NAME = "pynag"
 SHORT_DESC = "Python modules for Nagios plugins and configuration"
@@ -62,6 +63,14 @@ def check_python_version():
     if sys.version_info[0] == 2 and sys.version_info[1] < 7:
         raise SystemExit("python 2.7 or newer is required")
 
+def set_control_version():
+    with open("./debian/control.tmpl", "r") as src, open("./debian/control", "w") as dst:
+        while True:
+            datain = src.readline()
+            if len(datain) == 0: break
+            dataout = re.sub(r"%VERSION%", __version__, datain)
+            dst.write(dataout)
+
 if __name__ == "__main__":
     check_python_version()
     manpath = "share/man/man1"
@@ -71,6 +80,7 @@ if __name__ == "__main__":
     logpath = "/var/log/%s/" % NAME
     varpath = "/var/lib/%s/" % NAME
     rotpath = "/etc/logrotate.d"
+    set_control_version()
     setup(
         name='%s' % NAME,
         version=__version__,
